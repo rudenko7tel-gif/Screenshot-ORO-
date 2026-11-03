@@ -76,7 +76,7 @@ public class MainActivity extends Activity {
         TextView t = text("Screenshot ORO", 22, TEXT, true);
         t.setPadding(dp(10), 0, 0, 0);
         head.addView(t);
-        TextView ver = text("  v0.0002", 13, GRAY, false);
+        TextView ver = text("  v0.0003", 13, GRAY, false);
         head.addView(ver, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
         TextView q = text("?", 20, Color.WHITE, true);
         q.setGravity(Gravity.CENTER);
@@ -94,13 +94,56 @@ public class MainActivity extends Activity {
 
         for (int i = 1; i <= 3; i++) root.addView(card(i, i == m));
 
-        // звук и вибрация
+        // звук (вариант 17) и вибрация (вариант 20)
         LinearLayout snd = box(false);
-        snd.addView(text("Звук и вибрация", 16, TEXT, true));
-        snd.addView(text("Щелчок затвора (громкость — кнопками, как у мультимедиа) и вибрация 50 мс.", 14, GRAY, false));
-        Button play = button("▶ Послушать");
-        play.setOnClickListener(v -> App.feedback());
-        snd.addView(play, wrap());
+        snd.addView(text("Звук снимка", 16, TEXT, true));
+        snd.addView(text("Играет через мультимедиа: громкость — кнопками.", 14, GRAY, false));
+        int cur = App.sound(this);
+        for (int k = 0; k < App.SOUND_NAMES.length; k++) {
+            final int idx = k;
+            LinearLayout row = new LinearLayout(this);
+            row.setGravity(Gravity.CENTER_VERTICAL);
+            row.setPadding(0, dp(6), 0, dp(6));
+            TextView nm = text((k == cur ? "◉  " : "○  ") + App.SOUND_NAMES[k], 16, k == cur ? GREEN : TEXT, k == cur);
+            row.addView(nm, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+            if (k != App.SOUND_OFF) {
+                TextView pl = text("▶", 18, Color.WHITE, false);
+                pl.setGravity(Gravity.CENTER);
+                GradientDrawable pg = new GradientDrawable();
+                pg.setShape(GradientDrawable.OVAL);
+                pg.setColor(GREEN);
+                pl.setBackground(pg);
+                pl.setOnClickListener(v -> App.playSound(idx));
+                row.addView(pl, new LinearLayout.LayoutParams(dp(40), dp(40)));
+            }
+            row.setOnClickListener(v -> {
+                App.setSound(this, idx);
+                if (idx != App.SOUND_OFF) App.playSound(idx);
+                build();
+            });
+            snd.addView(row);
+        }
+
+        int vib = App.vibMs(this);
+        TextView vl = text(vib == 0 ? "Вибрация: выкл" : "Вибрация: " + vib + " мс", 16, TEXT, true);
+        vl.setPadding(0, dp(12), 0, 0);
+        snd.addView(vl);
+        android.widget.SeekBar sb = new android.widget.SeekBar(this);
+        sb.setMax(50); // 0..500 мс, шаг 10
+        sb.setProgress(vib / 10);
+        sb.setProgressTintList(android.content.res.ColorStateList.valueOf(GREEN));
+        sb.setThumbTintList(android.content.res.ColorStateList.valueOf(GREEN));
+        sb.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(android.widget.SeekBar b, int p, boolean user) {
+                vl.setText(p == 0 ? "Вибрация: выкл" : "Вибрация: " + (p * 10) + " мс");
+            }
+            @Override public void onStartTrackingTouch(android.widget.SeekBar b) { }
+            @Override public void onStopTrackingTouch(android.widget.SeekBar b) {
+                App.setVibMs(MainActivity.this, b.getProgress() * 10);
+                App.vibrate(b.getProgress() * 10);
+            }
+        });
+        snd.addView(sb);
         root.addView(snd);
     }
 
