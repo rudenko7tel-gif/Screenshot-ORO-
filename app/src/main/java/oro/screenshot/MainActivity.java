@@ -76,8 +76,16 @@ public class MainActivity extends Activity {
         TextView t = text("Screenshot ORO", 22, TEXT, true);
         t.setPadding(dp(10), 0, 0, 0);
         head.addView(t);
-        TextView ver = text("  v0.0001", 13, GRAY, false);
-        head.addView(ver);
+        TextView ver = text("  v0.0002", 13, GRAY, false);
+        head.addView(ver, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        TextView q = text("?", 20, Color.WHITE, true);
+        q.setGravity(Gravity.CENTER);
+        GradientDrawable qg = new GradientDrawable();
+        qg.setShape(GradientDrawable.OVAL);
+        qg.setColor(GREEN);
+        q.setBackground(qg);
+        q.setOnClickListener(v -> showHelp());
+        head.addView(q, new LinearLayout.LayoutParams(dp(40), dp(40)));
         root.addView(head);
 
         TextView hint = text("Удерживайте кнопку «Домой» — получится снимок экрана со звуком и вибрацией. Выберите способ, который работает на этом устройстве:", 15, GRAY, false);
@@ -189,6 +197,17 @@ public class MainActivity extends Activity {
     }
 
     @Override public void onRequestPermissionsResult(int rc, String[] p, int[] r) { build(); }
+
+    // ---------------- справка ----------------
+    void showHelp() {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Как пользоваться")
+                .setMessage("1. Выберите способ и назначьте Screenshot ORO цифровым помощником.\n\n"
+                        + "2. Для способов 1 и 2 включите спецвозможность.\n\n"
+                        + "3. Удержите кнопку «Домой» — получится снимок со звуком и вибрацией.")
+                .setPositiveButton("Понятно", null)
+                .show();
+    }
 
     // ---------------- проверки ----------------
     boolean isAssistant() {
