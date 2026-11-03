@@ -14,7 +14,16 @@ jobs:
         with: { distribution: temurin, java-version: 17 }
       - uses: gradle/actions/setup-gradle@v4
         with: { gradle-version: 8.9 }
+      - name: Signing key from secrets
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        run: |
+          if [ -z "$SIGNING_KEY" ]; then echo "Нет секрета SIGNING_KEY — сборка остановлена"; exit 1; fi
+          echo "$SIGNING_KEY" | base64 -d > "$RUNNER_TEMP/oro.jks"
+          echo "SIGNING_KEYSTORE=$RUNNER_TEMP/oro.jks" >> $GITHUB_ENV
       - run: gradle assembleDebug --no-daemon
+        env:
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
       - name: Name APK by version
         run: |
           V=$(grep versionName app/build.gradle | sed "s/.*'\(.*\)'.*/\1/")
