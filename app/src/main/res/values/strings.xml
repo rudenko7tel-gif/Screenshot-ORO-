@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="acc_desc">Нужна Screenshot ORO, чтобы делать снимок экрана при удержании кнопки «Домой». Приложение ничего не читает с экрана и не собирает данные.</string>
+</resources>

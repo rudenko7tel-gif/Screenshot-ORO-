@@ -1,0 +1,14 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'oro.screenshot'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'oro.screenshot'
+        minSdk 28
+        targetSdk 30
+        versionCode 1
+        versionName '0.0001'
+    }
+    lint { abortOnError false; checkReleaseBuilds false }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}
